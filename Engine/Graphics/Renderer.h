@@ -2,7 +2,9 @@
 #include "Framework/System.h"
 #include "Texture.h"
 #include "Math/Transform.h"
-#include <SDL_image.h>
+
+#include <glad/glad.h>
+#include <SDL.h>
 #include <string>
 
 namespace pbls
@@ -21,7 +23,7 @@ namespace pbls
 		friend class Texture;
 
 	private:
-		SDL_Renderer* renderer{ nullptr };
+		SDL_GLContext context;
 		SDL_Window* window{ nullptr };
 	};
 }
