@@ -4,14 +4,11 @@ namespace pbls
 {
 	void Transform::Update()
 	{
+		glm::mat4 mxt = glm::translate(position);
+		glm::mat4 mxr = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
 		glm::mat4 mxs = glm::scale(scale);
 
-		//glm::mat4 mxr;
-		//mxr.Rotate(rotation);
-
-		glm::mat4 mxt = glm::translate(position);
-
-		matrix = mxs * mxt;
+		matrix = mxt * mxr * mxs;
 	}
 
 	void Transform::Update(const glm::mat4& mx)

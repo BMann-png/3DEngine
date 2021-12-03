@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "engine.h"
 #include <glad/glad.h>
 #include <iostream>
 #include <glm/vec3.hpp>
@@ -6,90 +6,77 @@
 
 #include "sdl.h"
 
-// vertices
-const float vertices[] =
-{
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-	-0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f
-};
-
-
-
-const GLuint indices[] =
-{
-	0, 2, 1,
-	0, 3, 2
-};
-
 int main(int argc, char** argv)
 {
-	pbls::Engine engine;
-	engine.Startup();
-	engine.Get<pbls::Renderer>()->Create("OpenGL", 800, 600);
+	std::unique_ptr<pbls::Engine> engine = std::make_unique<pbls::Engine>();
+	engine->Startup();
+	engine->Get<pbls::Renderer>()->Create("OpenGL", 800, 600);
+
+	//create scene
+	// create scene
+    std::unique_ptr<pbls::Scene> scene = std::make_unique<pbls::Scene>();
+    scene->engine = engine.get();
 
 	pbls::SeedRandom(static_cast<unsigned int>(time(nullptr)));
-	pbls::SetFilePath("../resources");
+	pbls::SetFilePath("../Resources");
 
-	std::shared_ptr<pbls::Program> program = engine.Get<pbls::ResourceSystem>()->Get<pbls::Program>("basic_program");
-	std::shared_ptr<pbls::Shader> vshader = engine.Get<pbls::ResourceSystem>()->Get<pbls::Shader>("shaders/basic.vert", (void*)GL_VERTEX_SHADER);
-	std::shared_ptr<pbls::Shader> fshader = engine.Get<pbls::ResourceSystem>()->Get<pbls::Shader>("shaders/basic.frag", (void*)GL_FRAGMENT_SHADER);
+	//create camera
+	// create camera
+	{
+		auto actor = CREATE_ENGINE_OBJECT(Actor);
+		actor->name = "camera";
+		actor->transform.position = glm::vec3{ 0, 0, 5 };
+		{
+			auto component = CREATE_ENGINE_OBJECT(CameraComponent);
+			component->SetPerspective(45.0f, 800.0f / 600.0f, 0.01f, 100.0f);
+			actor->AddComponent(std::move(component));
+		}
+		{
+			auto component = CREATE_ENGINE_OBJECT(FreeCameraController);
+			component->speed = 3;
+			component->sensitivity = 0.1f;
+			actor->AddComponent(std::move(component));
+		}
+		scene->AddActor(std::move(actor));
+	}
 
-	program->AddShader(vshader);
-	program->AddShader(fshader);
-	program->Link();
-	program->Use();
+	// create cube
+	{
+		auto actor = CREATE_ENGINE_OBJECT(Actor);
+		actor->name = "cow";
+		actor->transform.position = glm::vec3{ 0, 0, 0 };
 
-
-	//vertex  array
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	//create vertex buffer
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	GLuint ebo; //element buffer object
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	//position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-	glEnableVertexAttribArray(0);
-	//color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	//uv
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-	//texture
-	pbls::Texture texture;
-	texture.CreateTexture("textures/llama.jpg");
-	texture.Bind();
+		auto component = CREATE_ENGINE_OBJECT(ModelComponent);
+		component->model = engine->Get<pbls::ResourceSystem>()->Get<pbls::Model>("models/spot.obj");
+		component->material = engine->Get<pbls::ResourceSystem>()->Get<pbls::Material>("materials/wood.mtl", engine.get());
 
 
-	//uniform
-	float time = 0;
-	program->SetUniform("scale", time);
+		actor->AddComponent(std::move(component));
+		scene->AddActor(std::move(actor));
+	}
 
-	glm::vec3 tint{ 1.0f, 0.5f, 0.5f };
-	program->SetUniform("tint", tint);
+	{
+		auto actor = CREATE_ENGINE_OBJECT(Actor);
+		actor->name = "light";
+		actor->transform.position = glm::vec3{ 4 };
+
+		auto component = CREATE_ENGINE_OBJECT(LightComponent);
+		component->ambient = glm::vec3{ 0.2f };
+		component->diffuse = glm::vec3{ 1 };
+		component->specular = glm::vec3{ 1 };
+
+		actor->AddComponent(std::move(component));
+		scene->AddActor(std::move(actor));
+	}
+
+	glm::vec3 translate{ 0.0f };
+	float angle = 0;
 	
-
 	bool quit = false;
 	while (!quit)
 	{
 		SDL_Event event;
 		SDL_PollEvent(&event);
-
-
 
 		switch (event.type)
 		{
@@ -105,19 +92,23 @@ int main(int argc, char** argv)
 
 		SDL_PumpEvents();
 
-		engine.Update();
+		engine->Update();
+		scene->Update(engine->time.deltaTime);
 
-		time += engine.time.deltaTime;
 
-		time += engine.time.deltaTime;
-		program->SetUniform("scale", std::sin(time));
-		program->SetUniform("tint", tint);
 
-		engine.Get<pbls::Renderer>()->BeginFrame();
+		// update actor
+		auto actor = scene->FindActor("cow");
+		if (actor != nullptr)
+		{
+				actor->transform.rotation.y += engine->time.deltaTime;
+		}
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		engine->Get<pbls::Renderer>()->BeginFrame();
 
-		engine.Get<pbls::Renderer>()->EndFrame();
+		scene->Draw(nullptr);
+
+		engine->Get<pbls::Renderer>()->EndFrame();
 
 	}
 

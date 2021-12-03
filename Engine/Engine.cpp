@@ -15,7 +15,13 @@ namespace pbls
 
 		REGISTER_CLASS(Actor)
 		REGISTER_CLASS(AudioComponent)
+		REGISTER_CLASS(PhysicsComponent)
+		REGISTER_CLASS(MeshComponent)
+		REGISTER_CLASS(CameraComponent)
+		REGISTER_CLASS(LightComponent)
+		REGISTER_CLASS(ModelComponent)
 
+		REGISTER_CLASS(FreeCameraController)
 	}
 	void Engine::Shutdown()
 	{

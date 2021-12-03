@@ -2,6 +2,7 @@
 
 #define REGISTER_CLASS(class) pbls::ObjectFactory::Instance().Register<class>(#class);
 
+#define CREATE_ENGINE_OBJECT(class) pbls::ObjectFactory::Instance().Create<pbls::class>(#class);
 
 //systems
 #include "Audio/AudioSystem.h"
@@ -31,6 +32,8 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Program.h"
 #include "Graphics/Material.h"
+#include "Graphics/VertexBuffer.h"
+#include "Graphics/Model.h"
 
 //Input
 #include "Input/InputSystem.h"
@@ -45,6 +48,12 @@
 
 //Components
 #include "Component/AudioComponent.h"
+#include "Component/PhysicsComponent.h"
+#include "Component/CameraComponent.h"
+#include "Component/MeshComponent.h"
+#include "Component/LightComponent.h"
+#include "Component/FreeCameraController.h"
+#include "Component/ModelComponent.h"
 
 
 #include <vector>

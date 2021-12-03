@@ -1,4 +1,5 @@
 #include "Program.h"
+#include "Engine.h"
 
 namespace pbls
 {
@@ -16,10 +17,41 @@ namespace pbls
 		}
 	}
 
-	bool Program::Load(const std::string& name, void* null)
+	bool Program::Load(const std::string& filename, void* data)
 	{
+
+		auto engine = static_cast<Engine*>(data);
+
+			rapidjson::Document document;
+		bool success = pbls::json::Load(filename, document);
+		if (!success)
+		{
+			SDL_Log("Could not load shader file (%s).", filename.c_str());
+			return false;
+		}
+
+		std::string vertex_shader;
+		JSON_READ(document, vertex_shader);
+		if (!vertex_shader.empty())
+		{
+			auto vshader = engine->Get<pbls::ResourceSystem>()->Get<pbls::Shader>(vertex_shader, (void*)GL_VERTEX_SHADER);
+			AddShader(vshader);
+		}
+
+		std::string fragment_shader;
+		JSON_READ(document, fragment_shader);
+			if (!fragment_shader.empty())
+			{
+				auto fshader = engine->Get<pbls::ResourceSystem>()->Get<pbls::Shader>(fragment_shader, (void*)GL_FRAGMENT_SHADER);
+				AddShader(fshader);
+			}
+
+		Link();
+		Use();
+
 		return true;
 	}
+
 
 	void Program::AddShader(const std::shared_ptr<Shader>& shader)
 	{
@@ -41,7 +73,7 @@ namespace pbls
 		if (status == GL_FALSE)
 		{
 			GLint length = 0;
-			glGetShaderiv(program, GL_INFO_LOG_LENGTH, &length);
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 
 			if (length > 0)
 			{
@@ -134,15 +166,11 @@ namespace pbls
 		{
 			// add uniform to map
 			GLint uniform = glGetUniformLocation(program, name.c_str());
-			if (uniform != -1)
-			{
-				uniforms[name] = uniform;
-			}
-			else
+			if (uniform == -1)
 			{
 				SDL_Log("Could not find uniform: %s", name.c_str());
-				return -1;
 			}
+			uniforms[name] = uniform;
 		}
 
 		return uniforms[name];

@@ -7,7 +7,7 @@ namespace pbls
 	struct Transform : public ISerializable
 	{
 		glm::vec3 position{ 0 };
-		float rotation = 0;
+		glm::vec3 rotation{ 0 };
 		glm::vec3 scale{ 1 };
 
 		glm::vec3 localPosition{ 0 };
