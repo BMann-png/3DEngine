@@ -35,11 +35,11 @@ namespace pbls
 	{
 		std::string model_name;
 		JSON_READ(value, model_name);
-		model = owner->scene->engine->Get<pbls::ResourceSystem>()->Get<pbls::Model>(model_name);
+		model = owner->scene->engine->Get<ResourceSystem>()->Get<Model>(model_name);
 
 		std::string material_name;
 		JSON_READ(value, material_name);
-		material = owner->scene->engine->Get<pbls::ResourceSystem>()->Get<pbls::Material>(material_name, owner->scene->engine);
+		material = owner->scene->engine->Get<ResourceSystem>()->Get<Material>(material_name, owner->scene->engine);
 
 		return true;
 	}

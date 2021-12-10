@@ -20,57 +20,57 @@ int main(int argc, char** argv)
 	pbls::SetFilePath("../Resources");
 
 	//load scene
-	//rapidjson::Document document;
-	//bool success = pbls::json::Load("Scenes/main.scn", document);
-	//scene->Read(document);
+	rapidjson::Document document;
+	bool success = pbls::json::Load("Scenes/main.scn", document);
+	scene->Read(document);
 
 	// create camera
-	{
-		auto actor = CREATE_ENGINE_OBJECT(Actor);
-		actor->name = "camera";
-		actor->transform.position = glm::vec3{ 0, 0, 15 };
-		{
-			auto component = CREATE_ENGINE_OBJECT(CameraComponent);
-			component->SetPerspective(45.0f, 800.0f / 600.0f, 0.01f, 100.0f);
-			actor->AddComponent(std::move(component));
-		}
-		{
-			auto component = CREATE_ENGINE_OBJECT(FreeCameraController);
-			component->speed = 3;
-			component->sensitivity = 0.1f;
-			actor->AddComponent(std::move(component));
-		}
-		scene->AddActor(std::move(actor));
-	}
+	//{
+	//	auto actor = CREATE_ENGINE_OBJECT(Actor);
+	//	actor->name = "camera";
+	//	actor->transform.position = glm::vec3{ 0, 0, 15 };
+	//	{
+	//		auto component = CREATE_ENGINE_OBJECT(CameraComponent);
+	//		component->SetPerspective(45.0f, 800.0f / 600.0f, 0.01f, 100.0f);
+	//		actor->AddComponent(std::move(component));
+	//	}
+	//	{
+	//		auto component = CREATE_ENGINE_OBJECT(FreeCameraController);
+	//		component->speed = 3;
+	//		component->sensitivity = 0.1f;
+	//		actor->AddComponent(std::move(component));
+	//	}
+	//	scene->AddActor(std::move(actor));
+	//}
 
 	// create cube
-	{
-		auto actor = CREATE_ENGINE_OBJECT(Actor);
-		actor->name = "model";
-		actor->transform.position = glm::vec3{ 0, -5, 0 };
+	//{
+	//	auto actor = CREATE_ENGINE_OBJECT(Actor);
+	//	actor->name = "model";
+	//	actor->transform.position = glm::vec3{ 0, -5, 0 };
 
-		auto component = CREATE_ENGINE_OBJECT(ModelComponent);
-		component->model = engine->Get<pbls::ResourceSystem>()->Get<pbls::Model>("models/Stone.obj");
-		component->material = engine->Get<pbls::ResourceSystem>()->Get<pbls::Material>("materials/stonegolem.mtl", engine.get());
+	//	auto component = CREATE_ENGINE_OBJECT(ModelComponent);
+	//	component->model = engine->Get<pbls::ResourceSystem>()->Get<pbls::Model>("models/Stone.obj");
+	//	component->material = engine->Get<pbls::ResourceSystem>()->Get<pbls::Material>("materials/stonegolem.mtl", engine.get());
 
 
-		actor->AddComponent(std::move(component));
-		scene->AddActor(std::move(actor));
-	}
+	//	actor->AddComponent(std::move(component));
+	//	scene->AddActor(std::move(actor));
+	//}
 
-	{
-		auto actor = CREATE_ENGINE_OBJECT(Actor);
-		actor->name = "light";
-		actor->transform.position = glm::vec3{ 0, 2, 4 };
+	//{
+	//	auto actor = CREATE_ENGINE_OBJECT(Actor);
+	//	actor->name = "light";
+	//	actor->transform.position = glm::vec3{ 0, 2, 4 };
 
-		auto component = CREATE_ENGINE_OBJECT(LightComponent);
-		component->ambient = glm::vec3{ 0.2f };
-		component->diffuse = glm::vec3{ 1 };
-		component->specular = glm::vec3{ 1 };
+	//	auto component = CREATE_ENGINE_OBJECT(LightComponent);
+	//	component->ambient = glm::vec3{ 0.2f };
+	//	component->diffuse = glm::vec3{ 1 };
+	//	component->specular = glm::vec3{ 1 };
 
-		actor->AddComponent(std::move(component));
-		scene->AddActor(std::move(actor));
-	}
+	//	actor->AddComponent(std::move(component));
+	//	scene->AddActor(std::move(actor));
+	//}
 
 	glm::vec3 translate{ 0.0f };
 	float angle = 0;
