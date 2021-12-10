@@ -1,6 +1,7 @@
 #include "ModelComponent.h"
 #include "CameraComponent.h"
 #include "Object/Actor.h"
+#include "Engine.h"
 
 namespace pbls
 {
@@ -11,6 +12,7 @@ namespace pbls
 
 	void ModelComponent::Draw(Renderer* renderer)
 	{
+		material->shader->Use();
 		material->shader->SetUniform("model", owner->transform.matrix);
 		auto actor = owner->scene->FindActor("camera");
 		if (actor != nullptr)
@@ -31,6 +33,15 @@ namespace pbls
 
 	bool ModelComponent::Read(const rapidjson::Value& value)
 	{
+		std::string model_name;
+		JSON_READ(value, model_name);
+		model = owner->scene->engine->Get<pbls::ResourceSystem>()->Get<pbls::Model>(model_name);
+
+		std::string material_name;
+		JSON_READ(value, material_name);
+		material = owner->scene->engine->Get<pbls::ResourceSystem>()->Get<pbls::Material>(material_name, owner->scene->engine);
+
 		return true;
 	}
+
 }

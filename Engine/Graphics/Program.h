@@ -21,6 +21,7 @@ namespace pbls
 
 		GLuint GetID() { return program; }
 		bool IsLinked() { return linked; }
+		void DisplayInfo();
 
 		void SetUniform(const std::string& name, float x, float y, float z);
 		void SetUniform(const std::string& name, const glm::vec2& v2);

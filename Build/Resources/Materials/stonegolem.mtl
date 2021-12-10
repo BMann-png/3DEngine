@@ -1,0 +1,23 @@
+{
+    "ambient":[
+        1,
+        1,
+        0
+    ],
+    "diffuse":[
+        1,
+        1,
+        1
+    ],
+  "specular": [
+    1,
+    1,
+    1
+  ],
+  "shininess": 1000,
+    "shader_name":"shaders/phong_normal.shdr",
+    "texture_names":[
+      "textures/stone.png",
+      "textures/normal.png"
+    ]
+}

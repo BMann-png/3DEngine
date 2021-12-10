@@ -1,0 +1,84 @@
+{
+  "actors": [
+    {
+      "type": "Actor",
+      "name": "model",
+      "tag": "model",
+      "prototype": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          -5
+        ]
+      },
+      "components": [
+        {
+          "type": "ModelComponent",
+          "model_name": "Models/sphere.obj",
+          "material_name": "Materials/bricks.mtl"
+        }
+      ]
+    },
+    {
+      "type": "Actor",
+      "name": "camera",
+      "tag": "camera",
+      "prototype": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          5
+        ]
+      },
+      "components": [
+        {
+          "type": "CameraComponent",
+          "fov": 45,
+          "aspect_ratio": 1.33,
+          "near": 0.01,
+          "far": 100.0
+        },
+        {
+          "type": "FreeCameraController",
+          "speed": 3,
+          "sensitivity": 0.2
+        }
+      ]
+    },
+    {
+      "type": "Actor",
+      "name": "light",
+      "tag": "light",
+      "prototype": false,
+      "transform": {
+        "position": [
+          0,
+          2,
+          4
+        ]
+      },
+      "components": [
+        {
+          "type": "LightComponent",
+          "ambient": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "diffuse": [
+            1,
+            1,
+            1
+          ],
+          "specular": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}
